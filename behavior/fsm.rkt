@@ -12,7 +12,7 @@
    (->* (symbol?
          (non-empty-listof state?)
          (non-empty-listof transition?))
-        ((non-empty-listof symbol?))
+        ((listof symbol?))
        state-machine?)]
 
   [make-state
@@ -59,7 +59,6 @@
 
  (except-out
   (struct-out machine-execution)
-  private-machine-execution
   machine-execution-reporter)
  
  (except-out
@@ -139,11 +138,11 @@
     (for/hash ([state states])
       (values (state-name state)
               (filter (λ (t) (equal? (transition-source-name t) (state-name state))) transitions))))
-  (for ([(state transitions) transition-hash])
-    (define unguarded (filter (λ (t) (equal? (transition-guard t) no-guard)) transitions))
-    (when (> (length unguarded) 1)
-      (raise-argument-error 'make-state-machine
-                            "State has more than one outgoing, unguarded, transitions" state)))
+  ;; (for ([(state transitions) transition-hash])
+  ;;   (define unguarded (filter (λ (t) (equal? (transition-guard t) no-guard)) transitions))
+  ;;   (when (> (length unguarded) 1)
+  ;;     (raise-argument-error 'make-state-machine
+  ;;                           "State has more than one outgoing, unguarded, transitions" state)))
   
   (define event-set (set-union (for/set ([transition transitions])
                                  (transition-trigger-event transition))
